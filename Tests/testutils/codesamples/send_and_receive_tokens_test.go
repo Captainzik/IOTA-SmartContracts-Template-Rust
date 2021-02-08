@@ -132,7 +132,7 @@ func Test_SendTokensToContract_NoContractFees(t *testing.T) {
 	chain := env.NewChain(nil, "myChain")
 
 	// Uploads wasm of SC and deploys it into chain
-	const contractName = "my_iota_sc"                      // "myContract"
+	const contractName = "my_iota_sc"
 	contractWasmFilePath := "<file path to contract.wasm>" // You can use if file is in SmartContract/pkg testutils.MustGetContractWasmFilePath(contractName)
 	err := chain.DeployWasmContract(nil, contractName, contractWasmFilePath)
 	require.NoError(t, err)
