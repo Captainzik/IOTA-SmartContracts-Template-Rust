@@ -12,11 +12,12 @@ func Test_DeploySmartContractIntoChain(t *testing.T) {
 	chain := env.NewChain(nil, "myChain")
 
 	// Uploads wasm of SC and deploys it into chain
-	const contractName = "myContract"
-	const contractWasmFilePath = "<file path to contract.wasm>" // You can use if file is in SmartContract/pkg testutils.MustGetContractWasmFilePath("my_iota_sc")
+	const contractName = "my_iota_sc"
+	const contractWasmFilePath = "<file path to contract.wasm>" // You can use if file is in SmartContract/pkg testutils.MustGetContractWasmFilePath(contractName)
 	err := chain.DeployWasmContract(nil, contractName, contractWasmFilePath)
 	require.NoError(t, err)
 
+	// Loads contract information
 	contract, err := chain.FindContract(contractName)
 	require.NoError(t, err)
 	require.NotNil(t, contract)
@@ -28,11 +29,12 @@ func Test_CallSmartContract_PostRequest(t *testing.T) {
 	chain := env.NewChain(nil, "myChain")
 
 	// Uploads wasm of SC and deploys it into chain
-	const contractName = "myContract"
-	const contractWasmFilePath = "<file path to contract.wasm>" // You can use if file is in SmartContract/pkg testutils.MustGetContractWasmFilePath("my_iota_sc")
+	const contractName = "my_iota_sc"
+	const contractWasmFilePath = "<file path to contract.wasm>" // You can use if file is in SmartContract/pkg testutils.MustGetContractWasmFilePath(contractName)
 	err := chain.DeployWasmContract(nil, contractName, contractWasmFilePath)
 	require.NoError(t, err)
 
+	// Loads contract information
 	contract, err := chain.FindContract(contractName)
 	require.NoError(t, err)
 	require.NotNil(t, contract)
@@ -52,11 +54,12 @@ func Test_CallSmartContract_CallView(t *testing.T) {
 	chain := env.NewChain(nil, "myChain")
 
 	// Uploads wasm of SC and deploys it into chain
-	const contractName = "myContract"
-	const contractWasmFilePath = "<file path to contract.wasm>" // You can use if file is in SmartContract/pkg testutils.MustGetContractWasmFilePath("my_iota_sc")
+	const contractName = "my_iota_sc"
+	const contractWasmFilePath = "<file path to contract.wasm>" // You can use if file is in SmartContract/pkg testutils.MustGetContractWasmFilePath(contractName)
 	err := chain.DeployWasmContract(nil, contractName, contractWasmFilePath)
 	require.NoError(t, err)
 
+	// Loads contract information
 	contract, err := chain.FindContract(contractName)
 	require.NoError(t, err)
 	require.NotNil(t, contract)

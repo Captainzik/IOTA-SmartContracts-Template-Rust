@@ -37,7 +37,8 @@ func Test_SendTokensToChain_NoContractFees(t *testing.T) {
 
 	// Transfer from value tangle to the chain
 	transferRequest := solo.NewCallParams(accounts.Name, accounts.FuncDeposit).WithTransfer(balance.ColorIOTA, transferValueIotas)
-	chain.PostRequest(transferRequest, senderWalletKeyPair)
+	_, err := chain.PostRequest(transferRequest, senderWalletKeyPair)
+	require.NoError(t, err)
 
 	// Wallet balances -> After transfer to chain
 	env.AssertAddressBalance(senderWalletAddress, balance.ColorIOTA, initialWalletFunds-transferValueIotas-iotaTokensConsumedByRequest)
@@ -73,7 +74,8 @@ func Test_SendAndReceiveTokens_NoContractFees(t *testing.T) {
 	transferRequest := solo.NewCallParams(accounts.Name, accounts.FuncDeposit, accounts.ParamAgentID, codec.EncodeAgentID(receiverWalletAgentID)).
 		WithTransfer(balance.ColorIOTA, transferValueIotas)
 
-	chain.PostRequest(transferRequest, senderWalletKeyPair)
+	_, err := chain.PostRequest(transferRequest, senderWalletKeyPair)
+	require.NoError(t, err)
 
 	// Wallet balances -> After transfer
 	env.AssertAddressBalance(senderWalletAddress, balance.ColorIOTA, initialWalletFunds-transferValueIotas-iotaTokensConsumedByRequest)
@@ -123,4 +125,45 @@ func Test_SendTokensToChain_WithContractFees(t *testing.T) {
 	// Wallet balances -> After transfer to chain
 	env.AssertAddressBalance(senderWalletAddress, balance.ColorIOTA, initialWalletFunds-transferValueIotas-iotaTokensConsumedByRequest) // Transfered tokens are debited from the value tangle
 	chain.AssertAccountBalance(senderAgentID, balance.ColorIOTA, transferValueIotas+iotaTokensConsumedByRequest-newOwnerFee)            // His tokens in the chain minus fees
+}
+
+func Test_SendTokensToContract(t *testing.T) {
+	env := solo.New(t, false, false)
+	chain := env.NewChain(nil, "myChain")
+
+	// Uploads wasm of SC and deploys it into chain
+	const contractName = "my_iota_sc"                      // "myContract"
+	contractWasmFilePath := "<file path to contract.wasm>" // You can use if file is in SmartContract/pkg testutils.MustGetContractWasmFilePath(contractName)
+	err := chain.DeployWasmContract(nil, contractName, contractWasmFilePath)
+	require.NoError(t, err)
+
+	// Loads contract information
+	contract, err := chain.FindContract(contractName)
+	require.NoError(t, err)
+	contractID := coretypes.NewContractID(chain.ChainID, contract.Hname())
+	contractAgentID := coretypes.NewAgentIDFromContractID(contractID)
+
+	// Generates key pairs for sender wallets, which will send iota tokens to the contract
+	senderWalletKeyPair := env.NewSignatureSchemeWithFunds()
+	senderWalletAddress := senderWalletKeyPair.Address()
+	senderAgentID := coretypes.NewAgentIDFromAddress(senderWalletAddress)
+	require.NotNil(t, senderWalletKeyPair)
+	require.NotNil(t, senderWalletAddress)
+	require.NotNil(t, senderAgentID)
+
+	// Wallet balance in value tangle -> Before transfer
+	env.AssertAddressBalance(senderWalletAddress, balance.ColorIOTA, initialWalletFunds)
+	require.GreaterOrEqual(t, initialWalletFunds, transferValueIotas)
+
+	// Transfer from value tangle to the contract (in the chain)
+	transferRequest := solo.NewCallParams(accounts.Name, accounts.FuncDeposit, accounts.ParamAgentID, contractAgentID).WithTransfer(balance.ColorIOTA, transferValueIotas)
+	_, err = chain.PostRequest(transferRequest, senderWalletKeyPair)
+	require.NoError(t, err)
+
+	// Wallet balances -> After transfer
+	env.AssertAddressBalance(senderWalletAddress, balance.ColorIOTA, initialWalletFunds-transferValueIotas-iotaTokensConsumedByRequest)
+	chain.AssertAccountBalance(senderAgentID, balance.ColorIOTA, iotaTokensConsumedByRequest)
+
+	// Contract account balance in the chain -> After transfer
+	chain.AssertAccountBalance(contractAgentID, balance.ColorIOTA, transferValueIotas)
 }

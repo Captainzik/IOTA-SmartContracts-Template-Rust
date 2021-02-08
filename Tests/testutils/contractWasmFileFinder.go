@@ -12,7 +12,19 @@ func MustGetContractWasmFilePath(t *testing.T, contractName string) string {
 	contractWasmFilePath := "../SmartContract/pkg/" + contractName + "_bg.wasm"
 	exists, err := fs.Exists(contractWasmFilePath)
 	require.NoError(t, err, "Error trying to find file: "+contractWasmFilePath)
-	require.True(t, exists, "File does not exist: "+contractWasmFilePath)
 
+	if !exists {
+		contractWasmFilePath = "../../SmartContract/pkg/" + contractName + "_bg.wasm"
+		exists, err = fs.Exists(contractWasmFilePath)
+		require.NoError(t, err, "Error trying to find file: "+contractWasmFilePath)
+	}
+
+	if !exists {
+		contractWasmFilePath = "../../../SmartContract/pkg/" + contractName + "_bg.wasm"
+		exists, err = fs.Exists(contractWasmFilePath)
+		require.NoError(t, err, "Error trying to find file: "+contractWasmFilePath)
+	}
+
+	require.True(t, exists, "File does not exist: "+contractWasmFilePath)
 	return contractWasmFilePath
 }
