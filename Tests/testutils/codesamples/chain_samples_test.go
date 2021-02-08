@@ -57,7 +57,7 @@ func Test_CreateChain_NoChainCreatorSpecified(t *testing.T) {
 	env.AssertAddressBalance(chain.ChainAddress, chain.ChainColor, iotaTokensConsumedByChain)
 
 	// IMPORTANT: When a chain is created, 1 IOTA is sent from the originator's account in the value tangle their account in the chain
-	chain.AssertAccountBalance(chain.OriginatorAgentID, balance.ColorIOTA, 1)
+	chain.AssertAccountBalance(chain.OriginatorAgentID, balance.ColorIOTA, iotaTokensConsumedByRequest)
 }
 
 func Test_SetChainFees(t *testing.T) {
