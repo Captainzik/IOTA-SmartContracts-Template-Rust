@@ -127,7 +127,7 @@ func Test_SendTokensToChain_WithContractFees(t *testing.T) {
 	chain.AssertAccountBalance(senderAgentID, balance.ColorIOTA, transferValueIotas+iotaTokensConsumedByRequest-newOwnerFee)            // His tokens in the chain minus fees
 }
 
-func Test_SendTokensToContract(t *testing.T) {
+func Test_SendTokensToContract_NoContractFees(t *testing.T) {
 	env := solo.New(t, false, false)
 	chain := env.NewChain(nil, "myChain")
 
