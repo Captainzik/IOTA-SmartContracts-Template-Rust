@@ -1,4 +1,4 @@
-[submodule "wasplib"]
-	path = wasplib
-	url = https://github.com/iotaledger/wasplib.git
+[submodule "SmartContract/wasp"]
+	path = SmartContract/wasp
+	url = https://github.com/iotaledger/wasp.git
 	branch = develop

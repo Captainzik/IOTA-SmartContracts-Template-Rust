@@ -15,7 +15,7 @@
       "LICENSE" : true,
       "*.md" : true,
       
-      "wasplib" : true,
+      "SmartContract/wasp" : true,
 
       "*.png" : true
     },

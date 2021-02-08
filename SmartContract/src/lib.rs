@@ -1,4 +1,4 @@
-use wasplib::client::*;
+use wasmlib::*;
 
 #[no_mangle]
 fn on_load() {
